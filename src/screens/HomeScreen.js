@@ -8,8 +8,6 @@ import {
 import SafeAreaView from 'react-native-safe-area-view';
 import { useFocusEffect } from '@react-navigation/native';
 
-import messaging from '@react-native-firebase/messaging';
-
 import ProfileDisplayer from 'src/components/ui/ProfileDisplayer';
 import EPNSNotifierIcon from 'src/components/custom/EPNSNotifierIcon';
 import ImageButton from 'src/components/buttons/ImageButton';
@@ -69,7 +67,7 @@ export default class HomeScreen extends Component {
     await MetaStorage.instance.setRemainingPasscodeAttempts(
       GLOBALS.CONSTANTS.MAX_PASSCODE_ATTEMPTS
     );
-    
+
   }
 
   // Run After Transition is finished

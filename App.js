@@ -9,7 +9,7 @@ import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 
-import messaging from '@react-native-firebase/messaging';
+import firebase, { Notification } from 'react-native-firebase';
 
 import SplashScreen from "src/screens/SplashScreen";
 
@@ -48,23 +48,54 @@ export default function App({ navigation }) {
 
   // HANDLE ON APP START
   React.useEffect(() => {
-    // PUSH NOTIFICATIONS HANDLING
     // Request Device Token and save it if need be
     Notifications.instance.requestDeviceToken();
 
     // Listen to whether the token changes
-    return messaging().onTokenRefresh(token => {
+    const onTokenRefreshListener = firebase.messaging().onTokenRefresh(token => {
       Notifications.instance.saveDeviceToken(token);
     });
-  }, []);
 
-  React.useEffect(() => {
+    // // Listen for incoming messages
+    // const notificationDisplayedListener = firebase.notifications().onNotificationDisplayed((notification) => {
+    //
+    //   // Process your notification as required
+    //   // ANDROID: Remote notifications do not contain the channel ID. You will have to specify this manually if you'd like to re-display the notification.
+    //   console.log("firebase.messaging().onNotificationDisplayed")
+    //   console.log(notification);
+    //
+    // });
+
     // Listen for incoming messages
-    const handleForegroundPush = messaging().onMessage(async remoteMessage => {
-      Notifications.instance.handleIncomingPushAppOpened(remoteMessage);
-    });
+    const onNotificationDisplayedListener = firebase
+      .notifications()
+      .onNotificationDisplayed((notification) => {
+        console.log(notification);
+        firebase.notifications().displayNotification(notification);
+      });
 
-    return handleForegroundPush;
+      const onNotificationListener = firebase
+        .notifications()
+        .onNotification((notification) => {
+          console.log(notification);
+          firebase.notifications().displayNotification(notification);
+        });
+
+
+
+    // // Listen for incoming messages
+    // const notificationOpenedListener = firebase.notifications().onNotificationOpened((notificationOpen) => {
+    //   const { title, body } = notificationOpen.notification;
+    //   console.log("firebase.notifications().onNotificationOpened")
+    //   console.log(notificationOpen);
+    // });
+
+    return () => {
+      onTokenRefreshListener();
+      onNotificationDisplayedListener();
+      onNotificationListener();
+      //notificationOpenedListener();
+    }
   }, []);
 
   // HANDLE AUTH FLOW

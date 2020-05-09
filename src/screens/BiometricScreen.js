@@ -15,7 +15,7 @@ import {
 import { useFocusEffect } from '@react-navigation/native';
 import { SafeAreaView, useSafeArea } from 'react-native-safe-area-context';
 
-import messaging from '@react-native-firebase/messaging';
+import firebase from 'react-native-firebase';
 
 import { BlurView } from 'expo-blur';
 import * as LocalAuthentication from 'expo-local-authentication';
@@ -324,9 +324,9 @@ export default class BiometricScreen extends Component {
     // Goto Next Screen
     // Check if the push notification permission is waiting for first grant
     // If not, skip this step completely as user either gave permission or denied it
-    const authorizationStatus = await messaging().hasPermission();
+    const enabled = await firebase.messaging().hasPermission();
 
-    if (authorizationStatus == messaging.AuthorizationStatus.NOT_DETERMINED) {
+    if (!enabled) {
       this.props.navigation.navigate('PushNotify');
     }
     else {

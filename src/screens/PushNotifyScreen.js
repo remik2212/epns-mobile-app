@@ -11,7 +11,7 @@ import {
 import { useFocusEffect } from '@react-navigation/native';
 import { SafeAreaView, useSafeArea } from 'react-native-safe-area-context';
 
-import messaging from '@react-native-firebase/messaging';
+import firebase from 'react-native-firebase';
 
 import StylishLabel from 'src/components/labels/StylishLabel';
 import DetailedInfoPresenter from 'src/components/misc/DetailedInfoPresenter';
@@ -103,9 +103,17 @@ export default class PushNotifyScreen extends Component {
 
   // Load the Next Screen
   loadNextScreenAfterAdditionalSetup = async () => {
-    const settings = await messaging().requestPermission();
-    if (settings == messaging.AuthorizationStatus.DENIED) {
-      // console.log('Permission settings:', settings);
+    try {
+      await firebase.messaging().requestPermission();
+
+      // User has authorised
+      if (!firebase.messaging().isRegisteredForRemoteNotifications) {
+        await firebase.messaging().registerForRemoteNotifications();
+      }
+
+      await Notifications.instance.requestDeviceToken();
+      this.loadNextScreen();
+    } catch (error) {
       // Display enabling push notification message and move on
       this.toggleNoticePrompt(
         true,
@@ -115,9 +123,6 @@ export default class PushNotifyScreen extends Component {
         `If you wish to enable Push Notifations in the future, you can do so from the [appsettings:App Settings]`,
         false
       );
-    }
-    else {
-      this.loadNextScreen();
     }
   }
 

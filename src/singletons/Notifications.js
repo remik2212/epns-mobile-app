@@ -1,4 +1,4 @@
-import messaging from '@react-native-firebase/messaging';
+import firebase from 'react-native-firebase';
 
 import FeedDBHelper from 'src/helpers/FeedDBHelper';
 import MetaStorage from 'src/singletons/MetaStorage';
@@ -22,11 +22,10 @@ export default class Notifications {
 
   // Request Device Token
   requestDeviceToken = async () => {
-    messaging()
-      .getToken()
-      .then(token => {
-        this.saveDeviceToken(token);
-      });
+    token = await firebase.messaging().getToken();
+    if (token) {
+      await this.saveDeviceToken(token);
+    }
   }
 
   // Save Device Token
