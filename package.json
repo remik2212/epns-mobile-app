@@ -69,7 +69,7 @@
     "react-native-parsed-text": "^0.0.21",
     "react-native-progress-circle": "2.1.0",
     "react-native-randombytes": "^3.5.3",
-    "react-native-reanimated": "1.9.0",
+    "react-native-reanimated": "2.10.0",
     "react-native-safe-area-context": "^0.7.3",
     "react-native-safe-area-view": "^1.1.1",
     "react-native-screens": "2.8.0",
